@@ -467,6 +467,7 @@ public:
 		MONEYTILE_NORMAL,
 		MONEYTILE_POLICE,
 		MONEYTILE_EXTRA,
+		MONEYTILE_LESS,
 	};
 	int m_MoneyTile;
 	bool m_LastPoliceFarmActive;

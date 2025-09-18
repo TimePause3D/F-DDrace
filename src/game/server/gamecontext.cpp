@@ -360,7 +360,13 @@ void CGameContext::CreateExplosion(vec2 Pos, int Owner, int Weapon, bool NoDamag
 
 	int Types = (1<<CGameWorld::ENTTYPE_CHARACTER);
 	if (Config()->m_SvInteractiveDrops)
-		Types |= (1<<CGameWorld::ENTTYPE_FLAG) | (1<<CGameWorld::ENTTYPE_PICKUP_DROP) | (1<<CGameWorld::ENTTYPE_MONEY) | (1<<CGameWorld::ENTTYPE_GROG) | (1<<CGameWorld::ENTTYPE_HELICOPTER);
+	{
+		Types |= (1<<CGameWorld::ENTTYPE_FLAG) | (1<<CGameWorld::ENTTYPE_PICKUP_DROP) | (1<<CGameWorld::ENTTYPE_MONEY) | (1<<CGameWorld::ENTTYPE_GROG);
+	}
+	if (Config()->m_SvInteractiveHeli)
+	{
+		Types |= (1<<CGameWorld::ENTTYPE_HELICOPTER);
+	}
 	int Num = m_World.FindEntitiesTypes(Pos, Radius, (CEntity * *)apEnts, MAX_CLIENTS, Types);
 	Mask128 TeamMask = Mask128();
 	for (int i = 0; i < Num; i++)
@@ -1780,6 +1786,7 @@ void CGameContext::OnClientEnter(int ClientID)
 	}
 
 	SendChatTarget(ClientID, "F-DDrace Mod. Version: " GAME_VERSION ", by fokkonaut");
+	SendChatTarget(ClientID, "With some tweaks by TimePause c;");
 	SendChatTarget(ClientID, "for more information, please say '/info'");
 	if (Config()->m_SvWelcome[0] != 0)
 		SendChatTarget(ClientID, Config()->m_SvWelcome);

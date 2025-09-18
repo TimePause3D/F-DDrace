@@ -38,6 +38,7 @@ void CGameContext::ConInfo(IConsole::IResult *pResult, void *pUserData)
 	if (!pPlayer)
 		return;
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info", "F-DDrace Mod. Version: " GAME_VERSION ", by fokkonaut");
+	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info", "With some tweaks by TimePause c;");
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info", "Source: https://github.com/fokkonaut/F-DDrace");
 	if(GIT_SHORTREV_HASH)
 	{
@@ -1509,9 +1510,8 @@ void CGameContext::ConSpawnWeaponsInfo(IConsole::IResult* pResult, void* pUserDa
 	str_format(aBuf, sizeof(aBuf), "~~~ %s ~~~", pPlayer->Localize("Spawn Weapons"));
 	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	pSelf->SendChatTarget(pResult->m_ClientID, pPlayer->Localize("You can buy spawn weapons in the shop."));
-	pSelf->SendChatTarget(pResult->m_ClientID, pPlayer->Localize("You will have the bought weapon on spawn."));
-	pSelf->SendChatTarget(pResult->m_ClientID, pPlayer->Localize("You can have max. 5 bullets per weapon."));
-	pSelf->SendChatTarget(pResult->m_ClientID, pPlayer->Localize("Each bullet costs 600.000 money."));
+	pSelf->SendChatTarget(pResult->m_ClientID, pPlayer->Localize("You will have the bought weapon ammo on spawn."));
+	pSelf->SendChatTarget(pResult->m_ClientID, pPlayer->Localize("You can have infinite amount of bullets per weapon."));
 	str_format(aBuf, sizeof(aBuf), "~~~ %s ~~~", pPlayer->Localize("Your Spawn Weapons"));
 	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	str_format(aBuf, sizeof(aBuf), "%s: %d", pPlayer->Localize("Spawn shotgun bullets"), pSelf->m_Accounts[pSelf->m_apPlayers[pResult->m_ClientID]->GetAccID()].m_SpawnWeapon[0]);

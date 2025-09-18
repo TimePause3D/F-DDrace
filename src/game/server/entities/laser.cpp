@@ -52,12 +52,16 @@ bool CLaser::HitEntity(vec2 From, vec2 To)
 	{
 		if (Config()->m_SvInteractiveDrops)
 		{
-			Types |= (1<<CGameWorld::ENTTYPE_FLAG) | (1<<CGameWorld::ENTTYPE_PICKUP_DROP) | (1<<CGameWorld::ENTTYPE_MONEY) | (1<<CGameWorld::ENTTYPE_GROG) | (1<<CGameWorld::ENTTYPE_HELICOPTER);
+			Types |= (1<<CGameWorld::ENTTYPE_FLAG) | (1<<CGameWorld::ENTTYPE_PICKUP_DROP) | (1<<CGameWorld::ENTTYPE_MONEY) | (1<<CGameWorld::ENTTYPE_GROG);
+		}
+		if (Config()->m_SvInteractiveHeli)
+		{
+			Types |= (1<<CGameWorld::ENTTYPE_HELICOPTER);
 		}
 	}
 	else if (m_Type == WEAPON_TASER)
 	{
-		if (Config()->m_SvInteractiveDrops)
+		if (Config()->m_SvInteractiveHeli)
 		{
 			Types |= (1<<CGameWorld::ENTTYPE_HELICOPTER);
 		}
@@ -81,7 +85,7 @@ bool CLaser::HitEntity(vec2 From, vec2 To)
 	}
 	else if (m_Type == WEAPON_LASER)
 	{
-		if (Config()->m_SvInteractiveDrops)
+		if (Config()->m_SvInteractiveHeli)
 		{
 			Types |= (1<<CGameWorld::ENTTYPE_HELICOPTER);
 		}

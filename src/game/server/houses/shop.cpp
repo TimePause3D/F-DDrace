@@ -21,21 +21,21 @@ CShop::CShop(CGameContext *pGameServer, int Type) : CHouse(pGameServer, Type)
 		m_NumItemsList = NUM_ITEMS_SHOP_LIST;
 
 		bool EuroMode = GameServer()->Config()->m_SvEuroMode;
+		AddItem("Room Key", 20, 10000, TIME_DISCONNECT, Localizable("If you have the room key you can enter the room. It's under the spawn and there is a money tile."));
+		AddItem("Spawn Shotgun", 25, 5000, TIME_USED, Localizable("You will have shotgun ammo if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
+		AddItem("Spawn Grenade", 25, 2500, TIME_USED, Localizable("You will have grenade ammo if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
+		AddItem("Spawn Rifle", 25, 10000, TIME_USED, Localizable("You will have rifle ammo if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
+		AddItem("Police", -1, 100000, TIME_FOREVER, Localizable("Police officers get help from the police bot. For more information about the specific police ranks, please say '/police'."));
+		AddItem("Taser", 30, -1, TIME_FOREVER, Localizable("Taser is a rifle that freezes a player. For more information about the taser and your taser stats, plase visit '/taser'."));
+		AddItem("Taser battery", 30, 45000, TIME_USED, Localizable("Taser battery is required to use the taser. Maximum amount of ammo is 100. Plase visit '/taser'."), false, 5);
 		AddItem("Rainbow", 5, 1500, TIME_DEATH, Localizable("Rainbow will make your tee change the color very fast."));
 		AddItem("Bloody", 15, 3500, TIME_DEATH, Localizable("Bloody will give your tee a permanent kill effect."));
-		AddItem("Police", -1, 100000, TIME_FOREVER, Localizable("Police officers get help from the police bot. For more information about the specific police ranks, please say '/police'."));
-		AddItem("Spooky Ghost", 1, 1000000, TIME_FOREVER, Localizable("Using this item you can hide from other players behind bushes. If your ghost is activated you will be able to shoot plasma projectiles. How it works: '/helptoggle'"));
-		AddItem("Room Key", 16, 5000, TIME_DISCONNECT, Localizable("If you have the room key you can enter the room. It's under the spawn and there is a money tile."));
+		AddItem("Spooky Ghost", 35, 1000000, TIME_FOREVER, Localizable("Using this item you can hide from other players behind bushes. If your ghost is activated you will be able to shoot plasma projectiles. How it works: '/helptoggle'"));
 		AddItem("VIP Classic", 1, EuroMode ? 5 : 500000, TIME_30_DAYS, Localizable("VIP Classic gives you some benefits, check '/vip'."), EuroMode);
-		AddItem("VIP+", 1, EuroMode ? 10 : 1000000, TIME_20_DAYS, Localizable("VIP+ gives you even more benefits than VIP Classic, check '/vip'."), EuroMode);
-		AddItem("Spawn Shotgun", 33, 600000, TIME_FOREVER, Localizable("You will have shotgun if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
-		AddItem("Spawn Grenade", 33, 600000, TIME_FOREVER, Localizable("You will have grenade if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
-		AddItem("Spawn Rifle", 33, 600000, TIME_FOREVER, Localizable("You will have rifle if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
-		AddItem("Ninjajetpack", 21, 10000, TIME_FOREVER, Localizable("It will make your jetpack gun be a ninja. Toggle it using '/ninjajetpack'."));
-		AddItem("Taser", 30, -1, TIME_FOREVER, Localizable("Taser is a rifle that freezes a player. For more information about the taser and your taser stats, plase visit '/taser'."));
-		AddItem("Taser battery", 30, 100000, TIME_FOREVER, Localizable("Taser battery is required to use the taser. Maximum amount of ammo is 100. Plase visit '/taser'."), false, 10);
+		AddItem("VIP+", 1, EuroMode ? 10 : 750000, TIME_20_DAYS, Localizable("VIP+ gives you even more benefits than VIP Classic, check '/vip'."), EuroMode);
+	//	AddItem("Ninjajetpack", 21, 10000, TIME_FOREVER, Localizable("It will make your jetpack gun be a ninja. Toggle it using '/ninjajetpack'.")); // UNUSED
 		AddItem("Portal Rifle", EuroMode ? 1 : 45, EuroMode ? 10 : 500000, TIME_20_DAYS, Localizable("With Portal Rifle you can create two portals where your cursor is, then teleport between them."), EuroMode);
-		AddItem("Portal Blocker", 20, 10000, TIME_FOREVER, Localizable("Create portal blockers hammer and this ammo with your cursor. See '/portal' for your current amount. How it works: '/helptoggle'"), false, 10);
+		AddItem("Portal Blocker", 10, 3000, TIME_USED, Localizable("Create portal blockers hammer and this ammo with your cursor. See '/portal' for your current amount. How it works: '/helptoggle' (Useless on BlockField. Can be used as temporary graffiti though.)"), false, 10);
 
 		static char aaBuf[NUM_POLICE_LEVELS][32];
 		for (int i = 0; i < NUM_POLICE_LEVELS; i++)
@@ -145,6 +145,7 @@ const char *CShop::GetTimeMessage(int Time)
 	case TIME_DEATH: return Localizable("You own this item until you die.");
 	case TIME_DISCONNECT: return Localizable("You own this item until\nyou disconnect.");
 	case TIME_FOREVER: return Localizable("You own this item forever.");
+	case TIME_USED: return Localizable("You own this item until you use it.");
 	case TIME_30_DAYS: return Localizable("You own this item for 30 days.");
 	case TIME_20_DAYS: return Localizable("You own this item for 20 days.");
 	case TIME_7_DAYS: return Localizable("You own this item for 7 days.");
@@ -279,18 +280,19 @@ void CShop::BuyItem(int ClientID, int Item)
 			ItemID = m_aBackgroundItem[ClientID];
 
 		// Check whether we have the item already
-		if ((Item == ITEM_RAINBOW				&& (pChr->m_Rainbow || pPlayer->m_InfRainbow))
-			|| (Item == ITEM_BLOODY				&& (pChr->m_Bloody || pChr->m_StrongBloody))
+		if (
+			(Item == ITEM_ROOM_KEY			&& (pPlayer->m_HasRoomKey))
 			|| (Item == ITEM_POLICE				&& pAccount->m_PoliceLevel >= NUM_POLICE_LEVELS)
-			|| (Item == ITEM_SPOOKY_GHOST		&& pAccount->m_SpookyGhost)
-			|| (Item == ITEM_ROOM_KEY			&& (pPlayer->m_HasRoomKey))
-			//|| (Item == ITEM_VIP				&& pAccount->m_VIP) // vip can be bought unlimited times
-			|| (Item == ITEM_SPAWN_SHOTGUN		&& pAccount->m_SpawnWeapon[0] >= 5)
-			|| (Item == ITEM_SPAWN_GRENADE		&& pAccount->m_SpawnWeapon[1] >= 5)
-			|| (Item == ITEM_SPAWN_RIFLE		&& pAccount->m_SpawnWeapon[2] >= 5)
-			|| (Item == ITEM_NINJAJETPACK		&& pAccount->m_Ninjajetpack)
 			|| (Item == ITEM_TASER				&& pAccount->m_TaserLevel >= NUM_TASER_LEVELS)
 			|| (Item == ITEM_TASER_BATTERY && pAccount->m_TaserBattery >= MAX_TASER_BATTERY)
+			|| (Item == ITEM_RAINBOW				&& (pChr->m_Rainbow || pPlayer->m_InfRainbow))
+			|| (Item == ITEM_BLOODY				&& (pChr->m_Bloody || pChr->m_StrongBloody))
+			|| (Item == ITEM_SPOOKY_GHOST		&& pAccount->m_SpookyGhost)
+			//|| (Item == ITEM_VIP				&& pAccount->m_VIP) // vip can be bought unlimited times
+			//|| (Item == ITEM_SPAWN_SHOTGUN		&& pAccount->m_SpawnWeapon[0]) // unlimited
+			//|| (Item == ITEM_SPAWN_GRENADE		&& pAccount->m_SpawnWeapon[1]) // unlimited
+			//|| (Item == ITEM_SPAWN_RIFLE		&& pAccount->m_SpawnWeapon[2]) // unlimited
+			//|| (Item == ITEM_NINJAJETPACK		&& pAccount->m_Ninjajetpack) // UNUSED
 			//|| (Item == ITEM_PORTAL_RIFLE		&& pAccount->m_PortalRifle) // portal rifle can be bought unlimited times
 			)
 		{
@@ -299,13 +301,12 @@ void CShop::BuyItem(int ClientID, int Item)
 			switch (Item)
 			{
 			case ITEM_POLICE:															GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have the highest police rank")); break;
-			case ITEM_SPAWN_SHOTGUN: case ITEM_SPAWN_GRENADE: case ITEM_SPAWN_RIFLE:	GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have the maximum amount of bullets")); break;
 			case ITEM_TASER:															GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have the maximum taser level")); break;
 			case ITEM_TASER_BATTERY:													GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have a fully filled taser battery")); break;
 			case ITEM_SPOOKY_GHOST: case ITEM_ROOM_KEY:									UseThe = true;
 				// fallthrough
 			default:
-				if (UseThe)
+				if (UseThe)	
 					str_format(aMsg, sizeof(aMsg), pPlayer->Localize("You already have the %s"), m_aItems[ItemID].m_pName);
 				else
 					str_format(aMsg, sizeof(aMsg), pPlayer->Localize("You already have %s"), m_aItems[ItemID].m_pName);
@@ -419,23 +420,23 @@ void CShop::BuyItem(int ClientID, int Item)
 
 		switch (Item)
 		{
-		case ITEM_RAINBOW:			pChr->Rainbow(true, -1, true); break;
-		case ITEM_BLOODY:			pChr->Bloody(true, -1, true); break;
-		case ITEM_POLICE:			pAccount->m_PoliceLevel++; break;
-		case ITEM_SPOOKY_GHOST:		pAccount->m_SpookyGhost = true; break;
 		case ITEM_ROOM_KEY:			pPlayer->m_HasRoomKey = true; pChr->Core()->m_MoveRestrictionExtra.m_RoomKey = true; break;
-		case ITEM_VIP_PLUS:			pChr->Core()->m_MoveRestrictionExtra.m_VipPlus = true;
-			// fallthrough
-		case ITEM_VIP:				pAccount->m_VIP = Item == ITEM_VIP ? VIP_CLASSIC : VIP_PLUS; pPlayer->SetExpireDate(Item); break;
 		case ITEM_SPAWN_SHOTGUN:	if (Weapon == -1) Weapon = 0;
 			// fallthrough
 		case ITEM_SPAWN_GRENADE:	if (Weapon == -1) Weapon = 1;
 			// fallthrough
 		case ITEM_SPAWN_RIFLE:		if (Weapon == -1) Weapon = 2;
-									pAccount->m_SpawnWeapon[Weapon]++; break;
-		case ITEM_NINJAJETPACK:		pAccount->m_Ninjajetpack = true; break;
+								pAccount->m_SpawnWeapon[Weapon]++; break;
+		case ITEM_POLICE:			pAccount->m_PoliceLevel++; break;
 		case ITEM_TASER:			pAccount->m_TaserLevel++; break;
 		case ITEM_TASER_BATTERY:	break; // done above
+		case ITEM_RAINBOW:			pChr->Rainbow(true, -1, true); break;
+		case ITEM_BLOODY:			pChr->Bloody(true, -1, true); break;
+		case ITEM_SPOOKY_GHOST:		pAccount->m_SpookyGhost = true; break;
+		case ITEM_VIP_PLUS:			pChr->Core()->m_MoveRestrictionExtra.m_VipPlus = true;
+			// fallthrough
+		case ITEM_VIP:				pAccount->m_VIP = Item == ITEM_VIP ? VIP_CLASSIC : VIP_PLUS; pPlayer->SetExpireDate(Item); break;
+		// case ITEM_NINJAJETPACK:		pAccount->m_Ninjajetpack = true; break; // UNUSED
 		case ITEM_PORTAL_RIFLE:		pAccount->m_PortalRifle = true; pPlayer->SetExpireDate(Item);
 									if (pPlayer->GetCharacter())
 										pPlayer->GetCharacter()->GiveWeapon(WEAPON_PORTAL_RIFLE);

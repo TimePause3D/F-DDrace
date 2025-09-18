@@ -138,7 +138,7 @@ MACRO_CONFIG_STR(SvSqlFailureFile, sv_sql_failure_file, 64, "failed_sql.sql", CF
 MACRO_CONFIG_INT(SvSqlQueriesDelay, sv_sql_queries_delay, 1, 0, 20, CFGFLAG_SERVER, "Delay in seconds between SQL queries of a single player", AUTHED_ADMIN)
 #endif
 
-MACRO_CONFIG_STR(SvWelcome, sv_welcome, 64, "Welcome to this F-DDrace server! For more info, type /info.", CFGFLAG_SERVER, "Message that will be displayed to players who join the server", AUTHED_ADMIN)
+MACRO_CONFIG_STR(SvWelcome, sv_welcome, 64, "Welcome to Tajm's chill Lounge! For more info, type /info.", CFGFLAG_SERVER, "Message that will be displayed to players who join the server", AUTHED_ADMIN)
 MACRO_CONFIG_INT(ConnTimeout, conn_timeout, 100, 5, 1000, CFGFLAG_SAVE|CFGFLAG_CLIENT|CFGFLAG_SERVER, "Network timeout", AUTHED_ADMIN)
 MACRO_CONFIG_INT(ConnTimeoutProtection, conn_timeout_protection, 1000, 5, 10000, CFGFLAG_SERVER, "Network timeout protection", AUTHED_ADMIN)
 MACRO_CONFIG_INT(SvVoteDelay, sv_vote_delay, 3, 0, 9999, CFGFLAG_SERVER, "The time in seconds between any vote", AUTHED_ADMIN)

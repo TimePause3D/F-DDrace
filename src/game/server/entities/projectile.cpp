@@ -95,7 +95,11 @@ void CProjectile::Tick()
 		int Types = (1<<CGameWorld::ENTTYPE_CHARACTER);
 		if (Config()->m_SvInteractiveDrops)
 		{
-			Types |= (1<<CGameWorld::ENTTYPE_FLAG) | (1<<CGameWorld::ENTTYPE_PICKUP_DROP) | (1<<CGameWorld::ENTTYPE_MONEY) | (1<<CGameWorld::ENTTYPE_HELICOPTER) | (1<<CGameWorld::ENTTYPE_GROG);
+			Types |= (1<<CGameWorld::ENTTYPE_FLAG) | (1<<CGameWorld::ENTTYPE_PICKUP_DROP) | (1<<CGameWorld::ENTTYPE_MONEY) | (1<<CGameWorld::ENTTYPE_GROG);
+		}
+		if (Config()->m_SvInteractiveHeli)
+		{
+			Types |= (1<<CGameWorld::ENTTYPE_HELICOPTER);
 		}
 		CEntity *pNotThis = pOwnerChar && pOwnerChar->m_pHelicopter ? (CEntity *)pOwnerChar->m_pHelicopter : (CEntity *)pOwnerChar;
 		CEntity *pEnt = GameWorld()->IntersectEntityTypes(PrevPos, ColPos, m_Freeze ? 1.0f : 6.0f, ColPos, pNotThis, m_Owner, Types);

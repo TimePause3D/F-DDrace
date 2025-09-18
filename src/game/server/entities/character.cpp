@@ -1130,8 +1130,12 @@ void CCharacter::FireWeapon()
 		m_aWeapons[GetActiveWeapon()].m_Ammo--;
 
 		int W = GetSpawnWeaponIndex(GetActiveWeapon());
+		if (W != -1 && m_aSpawnWeaponActive[W])
+			pAccount->m_SpawnWeapon[W]--;
 		if (W != -1 && m_aSpawnWeaponActive[W] && m_aWeapons[GetActiveWeapon()].m_Ammo == 0)
 			GiveWeapon(GetActiveWeapon(), true);
+		
+
 	}
 
 	// Do this here and not in the switch case so that spread taser will only take 1 battery either. Portal can't be spread, so it can be handled there
@@ -2855,7 +2859,8 @@ void CCharacter::HandleTiles(int Index)
 		bool MoneyTile = m_TileIndex == TILE_MONEY || m_TileFIndex == TILE_MONEY;
 		bool PoliceMoneyTile = m_TileIndex == TILE_MONEY_POLICE || m_TileFIndex == TILE_MONEY_POLICE;
 		bool ExtraMoneyTile = m_TileIndex == TILE_MONEY_EXTRA || m_TileFIndex == TILE_MONEY_EXTRA;
-		if ((MoneyTile || PoliceMoneyTile || ExtraMoneyTile) && !m_ProcessedMoneyTile)
+		bool LessMoneyTile = m_TileIndex == TILE_MONEY_LESS || m_TileFIndex == TILE_MONEY_LESS;
+		if ((MoneyTile || PoliceMoneyTile || ExtraMoneyTile || LessMoneyTile) && !m_ProcessedMoneyTile)
 		{
 			m_ProcessedMoneyTile = true; // when multiple speedups on a moneytile face into each other the player skips multiple tiles in one tick leading to doubled xp and money
 
@@ -2894,12 +2899,19 @@ void CCharacter::HandleTiles(int Index)
 			{
 				m_MoneyTile = MONEYTILE_EXTRA;
 			}
+			else if (LessMoneyTile) // Something like plot farm but new tile // TimePause
+			{
+				m_MoneyTile = MONEYTILE_LESS;
+			}
+		
 
 			bool Plot = GetCurrentTilePlotID() >= PLOT_START;
 			int Ticks = Server()->TickSpeed();
 			if (m_pPlayer->m_JailTime) // every 3 seconds only while arrested
 				Ticks *= 3;
 			else if (Plot) // every 2 seconds only on plot money tile
+				Ticks *= 2;
+			else if (LessMoneyTile) // 2 sec only for weak money tiles // TimePause
 				Ticks *= 2;
 
 			if (Server()->Tick() % Ticks == 0)
@@ -2925,7 +2937,7 @@ void CCharacter::HandleTiles(int Index)
 					TileMoney = 2;
 				}
 
-				int AliveState = Plot ? 0 : GetAliveState(); // disallow survival bonus on plot money tile
+				int AliveState = Plot || LessMoneyTile ? 0 : GetAliveState(); // disallow survival bonus on plot money tile
 				int XP = AliveState + TileXP + m_GrogSpirit;
 				int Money = TileMoney;
 
@@ -2942,7 +2954,7 @@ void CCharacter::HandleTiles(int Index)
 
 				//flag bonus
 				bool FlagBonus = false;
-				if (!PoliceMoneyTile && !ExtraMoneyTile && !Plot && HasFlag() != -1)
+				if (!PoliceMoneyTile && !ExtraMoneyTile && !LessMoneyTile && !Plot && HasFlag() != -1)
 				{
 					XP += 1;
 					FlagBonus = true;
@@ -2998,9 +3010,9 @@ void CCharacter::HandleTiles(int Index)
 		// taser shield
 		if (m_TileIndex == TILE_TASER_SHIELD_PLUS || m_TileFIndex == TILE_TASER_SHIELD_PLUS)
 		{
-			m_pPlayer->m_TaserShield = min(m_pPlayer->m_TaserShield + 20, 100);
+			m_pPlayer->m_TaserShield = min(m_pPlayer->m_TaserShield + 10, 100); // 20, 100
 			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), m_pPlayer->Localize("Congratulations, +20%% taser shield, current: %d%%. Use '/taser' to check later."), m_pPlayer->m_TaserShield);
+			str_format(aBuf, sizeof(aBuf), m_pPlayer->Localize("Congratulations, +10%% taser shield, current: %d%%. Use '/taser' to check later."), m_pPlayer->m_TaserShield);
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
 		}
 
@@ -3008,7 +3020,7 @@ void CCharacter::HandleTiles(int Index)
 		if (m_TileIndex == TILE_ADD_2X_XP_TWO_LIFES || m_TileFIndex == TILE_ADD_2X_XP_TWO_LIFES)
 		{
 			bool FirstlyAdded = m_pPlayer->m_DoubleXpLifesLeft == 0;
-			m_pPlayer->m_DoubleXpLifesLeft = min(m_pPlayer->m_DoubleXpLifesLeft + 2, 99);
+			m_pPlayer->m_DoubleXpLifesLeft = min(m_pPlayer->m_DoubleXpLifesLeft + 2, 3); // 2, 99
 			char aBuf[128];
 			str_format(aBuf, sizeof(aBuf), m_pPlayer->Localize("Congratulations, double-xp has been activated for %d lifes"), m_pPlayer->m_DoubleXpLifesLeft);
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
@@ -4630,7 +4642,8 @@ void CCharacter::HandleLastIndexTiles()
 	if (m_MoneyTile)
 	{
 		if (m_TileIndex != TILE_MONEY && m_TileFIndex != TILE_MONEY && m_TileIndex != TILE_MONEY_POLICE && m_TileFIndex != TILE_MONEY_POLICE
-			&& m_TileIndex != TILE_MONEY_EXTRA && m_TileFIndex != TILE_MONEY_EXTRA)
+			&& m_TileIndex != TILE_MONEY_EXTRA && m_TileFIndex != TILE_MONEY_EXTRA 
+			&& m_TileIndex != TILE_MONEY_LESS && m_TileFIndex != TILE_MONEY_LESS)
 		{
 			GameServer()->SendBroadcast("", m_pPlayer->GetCID(), false);
 			m_MoneyTile = MONEYTILE_NONE;

@@ -220,6 +220,7 @@ enum
 	TILE_SPECIAL_FINISH = 163,
 	TILE_MONEY_POLICE = 164,
 	TILE_MONEY_EXTRA = 165,
+	TILE_MONEY_LESS = 166,
 	TILE_PLOT_SHOP = 168,
 	TILE_TAVERN = 169,
 
@@ -260,6 +261,7 @@ enum
 	TILE_SWITCH_PLOT_TOTELE = 194, // totele plot position, // plot size; delay=0: small, delay=1: big
 	TILE_SWITCH_REDIRECT_SERVER_FROM = 195, // from tp for server redirection
 	TILE_SWITCH_REDIRECT_SERVER_TO = 196,
+	TILE_SWITCH_HELICOPTER_SPAWN = 229,
 	TILE_SWITCHTOGGLE = 28, // for draw editor placed buttons for plot draw doors, also supported as mappable tiles
 	TILE_TELE_INOUT_EVIL = 94, // also supported as mappable tiles
 	TILE_TELE_INOUT = 95, // also supported as mappable tiles
