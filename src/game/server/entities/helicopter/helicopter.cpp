@@ -83,7 +83,7 @@ CHelicopter::CHelicopter(CGameWorld *pGameWorld, int Spawner, int Team, vec2 Pos
 
 	m_SpawnTick = -1;
 	if (PlacedByTile)
-		m_SpawnTick = Server()->Tick() + Server()->TickSpeed() * Config()->m_SvHeliSpawnTime; // seconds can be adjusted later
+		m_SpawnTick = Server()->Tick() + Server()->TickSpeed() * Config()->m_SvHeliRespawnTime; // seconds can be adjusted later
 
 	m_InputDirection = 0;
 	m_MaxHealth = 60.f;
