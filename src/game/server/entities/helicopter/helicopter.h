@@ -62,11 +62,13 @@ private:
 	CVehicleTurret *m_pTurret;
 
 	// Tile respawn
+	bool TryRespawnNewHelicopter();
 	bool m_PlacedByTile;
 	int64 m_NextSpawnTick;
 	vec2 m_InitialPosition;
 	int m_InitialTurretType;
 	int m_SpawnTick;
+	bool m_FirstMount;
 
 	int m_ExplosionsLeft;
 	void HandleExplosions();

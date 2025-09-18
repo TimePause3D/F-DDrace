@@ -79,10 +79,11 @@ CHelicopter::CHelicopter(CGameWorld *pGameWorld, int Spawner, int Team, vec2 Pos
 	m_NextSpawnTick = 0;
 	m_InitialPosition = Pos;
 	m_InitialTurretType = TurretType;
+	m_FirstMount = true;
 
 	m_SpawnTick = -1;
 	if (PlacedByTile)
-		m_SpawnTick = Server()->Tick() + Server()->TickSpeed() * 30; // seconds can be adjusted later
+		m_SpawnTick = Server()->Tick() + Server()->TickSpeed() * Config()->m_SvHeliSpawnTime; // seconds can be adjusted later
 
 	m_InputDirection = 0;
 	m_MaxHealth = 60.f;
@@ -153,11 +154,16 @@ void CHelicopter::Reset()
 	Dismount();
 	CAdvancedEntity::Reset();
 
+	TryRespawnNewHelicopter();
+}
+
+bool CHelicopter::TryRespawnNewHelicopter()
+{
+	if (!m_PlacedByTile)
+		return false;
+
 	// placed by new tile, start regeneration/timer
-	if (m_PlacedByTile)
-	{
-		GameServer()->SpawnHelicopter(-1, 0, m_InitialPosition, m_InitialTurretType, 1.f, false, true);
-	}
+	return GameServer()->SpawnHelicopter(-1, 0, m_InitialPosition, m_InitialTurretType, 1.f, false, true);
 }
 
 bool CHelicopter::IsRegenerating()
@@ -636,6 +642,12 @@ bool CHelicopter::Mount(int ClientID)
 		GameServer()->SendTuningParams(m_Owner, GetOwner()->m_TuneZone);
 
 		m_BroadcastingTick = Server()->Tick() + 1; // Start updating broadcast next tick
+	}
+
+	if (m_FirstMount)
+	{
+		TryRespawnNewHelicopter();
+		m_FirstMount = false;
 	}
 	return true;
 }
