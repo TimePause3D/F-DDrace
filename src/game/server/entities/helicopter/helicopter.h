@@ -66,6 +66,7 @@ private:
 	int64 m_NextSpawnTick;
 	vec2 m_InitialPosition;
 	int m_InitialTurretType;
+	int m_SpawnTick;
 
 	int m_ExplosionsLeft;
 	void HandleExplosions();
@@ -110,6 +111,8 @@ public:
 	bool IsExploding() { return m_ExplosionsLeft > -1; }
 	bool IsBuilding() { return m_Build; }
 	bool IsRegenerating();
+
+	bool IsSpawning() { return m_SpawnTick > -1; }
 
 	// Manipulating
 	bool AttachTurret(CVehicleTurret *helicopterTurret);
