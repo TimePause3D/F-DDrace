@@ -68,12 +68,17 @@ bool MovingCircleHitsMovingSegment_Analytical(
 	return distSq <= radius * radius;
 }
 
-CHelicopter::CHelicopter(CGameWorld *pGameWorld, int Spawner, int Team, vec2 Pos, float HelicopterScale, bool Build)
+CHelicopter::CHelicopter(CGameWorld *pGameWorld, int Spawner, int Team, vec2 Pos, float HelicopterScale, bool Build, bool PlacedByTile, int TurretType)
 	: CAdvancedEntity(pGameWorld, CGameWorld::ENTTYPE_HELICOPTER, Pos, HELICOPTER_PHYSSIZE * HelicopterScale)
 {
 	m_AllowVipPlus = false;
 	m_Elasticity = 0.f;
 	m_DDTeam = Team;
+
+	m_PlacedByTile = PlacedByTile;
+	m_NextSpawnTick = 0;
+	m_InitialPosition = Pos;
+	m_InitialTurretType = TurretType;
 
 	m_InputDirection = 0;
 	m_MaxHealth = 60.f;
@@ -143,6 +148,12 @@ void CHelicopter::Reset()
 {
 	Dismount();
 	CAdvancedEntity::Reset();
+
+	// placed by new tile, start regeneration/timer
+	if (m_PlacedByTile)
+	{
+		GameServer()->SpawnHelicopter(-1, 0, m_InitialPosition, m_InitialTurretType, 1.f, false, true);
+	}
 }
 
 bool CHelicopter::IsRegenerating()

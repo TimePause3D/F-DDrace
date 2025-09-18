@@ -262,7 +262,7 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 	else if (Layer == LAYER_SWITCH && Index == TILE_SWITCH_HELICOPTER_SPAWN)
 	{
 		int Delay = GameServer()->Collision()->GetSwitchDelay(GameServer()->Collision()->GetMapIndex(Pos));
-		GameServer()->SpawnHelicopter(-1 /*owner*/, 0 /*team*/, Pos, Delay, 1.f);
+		GameServer()->SpawnHelicopter(-1 /*owner*/, 0 /*team*/, Pos, Delay, 1.f, true, true);
 	}
 	else if (Layer == LAYER_SWITCH && Index == TILE_DURAK_TABLE)
 	{

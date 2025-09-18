@@ -61,6 +61,12 @@ private:
 	SBone m_aBones[NUM_BONES];
 	CVehicleTurret *m_pTurret;
 
+	// Tile respawn
+	bool m_PlacedByTile;
+	int64 m_NextSpawnTick;
+	vec2 m_InitialPosition;
+	int m_InitialTurretType;
+
 	int m_ExplosionsLeft;
 	void HandleExplosions();
 
@@ -94,7 +100,7 @@ private:
 	void SortBones();
 
 public:
-	CHelicopter(CGameWorld *pGameWorld, int Spawner, int Team, vec2 Pos, float Scale = 1.f, bool Build = false);
+	CHelicopter(CGameWorld *pGameWorld, int Spawner, int Team, vec2 Pos, float Scale = 1.f, bool Build = false, bool PlacedByTile = false, int TurretType = TURRETTYPE_NONE);
 	virtual ~CHelicopter();
 
 	// Sense
