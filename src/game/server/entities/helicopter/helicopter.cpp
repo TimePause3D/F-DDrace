@@ -646,7 +646,8 @@ bool CHelicopter::Mount(int ClientID)
 
 	if (m_FirstMount)
 	{
-		TryRespawnNewHelicopter();
+		// Dont spawn heli on mount due to dupe? or handle the dupe?
+		//TryRespawnNewHelicopter();
 		m_FirstMount = false;
 	}
 	return true;
