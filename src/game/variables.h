@@ -204,6 +204,7 @@ MACRO_CONFIG_INT(SvV3OffsetY, sv_v3_offset_y, 0, 0, 9999, CFGFLAG_SERVER|CFGFLAG
 MACRO_CONFIG_INT(SvDummyBotSkin, sv_dummy_bot_skin, 0, 0, 1, CFGFLAG_SERVER, "Whether dummies should have the bot skin applied (0.7 only)", AUTHED_ADMIN)
 MACRO_CONFIG_INT(SvDummyBlocking, sv_dummy_blocking, 0, 0, 1, CFGFLAG_SERVER, "Whether blocking dummies increases killstreak and gives block points", AUTHED_ADMIN)
 MACRO_CONFIG_INT(SvHideBotsStatus, sv_hide_dummies_status, 1, 0, 1, CFGFLAG_SERVER, "Whether to hide server-side dummies from status command", AUTHED_ADMIN)
+MACRO_CONFIG_INT(SvBlockBotSpawn, sv_block_bot_spawn, 1, 0, 1, CFGFLAG_SERVER|CFGFLAG_GAME, "Allow Block bot on the server", AUTHED_ADMIN)
 
 // weapon indicator
 MACRO_CONFIG_INT(SvWeaponIndicatorDefault, sv_weapon_indicator_default, 1, 0, 1, CFGFLAG_SERVER, "Whether the weapon names are displayed in the broadcast", AUTHED_ADMIN)

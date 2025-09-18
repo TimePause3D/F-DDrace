@@ -7673,7 +7673,7 @@ void CGameContext::ConnectDefaultDummies()
 		ConnectDummy(DUMMYMODE_V3_BLOCKER);
 	}
 
-	if (Collision()->TileUsed(TILE_MINIGAME_BLOCK))
+	if (Collision()->TileUsed(TILE_MINIGAME_BLOCK) && Config()->m_SvBlockBotSpawn)
 		ConnectDummy(DUMMYMODE_V3_BLOCKER);
 
 	for (int i = 0; i < NUM_HOUSES; i++)
