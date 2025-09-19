@@ -203,6 +203,7 @@ public:
 	void OnLovelyVIP();
 	void OnRainbowNameVIP();
 	void OnSparkleVIP();
+	void OnLaserTextVIP(const char *pText);
 
 private:
 	// player controlling this character
@@ -672,6 +673,8 @@ public:
 	bool m_IsDoubleXp;
 
 	int64 m_LastMoneyDrop;
+
+	int64 m_LastLaserText;
 
 	// true if the character is constantly getting freezed by Freeze() function, e.g. on a freeze tile or while deepfrozen
 	bool m_IsFrozen;

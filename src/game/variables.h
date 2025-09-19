@@ -382,6 +382,8 @@ MACRO_CONFIG_INT(SvGrogForceHammer, sv_grog_force_hammer, 0, 0, 1, CFGFLAG_SERVE
 // Durak
 MACRO_CONFIG_INT(SvDurakTeamColor, sv_durak_team_colors, 1, 0, 1, CFGFLAG_SERVER, "Whether Durak minigame uses team colors for own round", AUTHED_ADMIN)
 
+// LaserText
+MACRO_CONFIG_INT(SvLaserTextDelay, sv_laser_text_delay, 5, 3, 999, CFGFLAG_SERVER, "Laser text delay", AUTHED_ADMIN)
 // Language
 MACRO_CONFIG_STR(SvDefaultLanguage, sv_default_language, 255, "", CFGFLAG_SERVER, "Default server language filename string without extension", AUTHED_ADMIN)
 MACRO_CONFIG_STR(SvLanguagesPath, sv_languages_path, 128, "data/languages", CFGFLAG_SERVER, "The path where the server searches the for the language index.txt (relative to binary)", AUTHED_ADMIN)

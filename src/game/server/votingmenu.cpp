@@ -43,6 +43,7 @@ static const char *ACC_VIP_PLUS_LOVELY = Localizable("Lovely");
 static const char *ACC_VIP_PLUS_RAINBOWNAME = Localizable("Rainbow Name");
 static const char *ACC_VIP_PLUS_RAINBOWSPEED = Localizable("Rainbow Speed");
 static const char *ACC_VIP_PLUS_SPARKLE = Localizable("Sparkle");
+static const char *ACC_VIP_PLUS_LASERTEXT = Localizable("Laser Text");
 // Misc
 static const char *MISC_HIDEDRAWINGS = Localizable("Hide Drawings");
 static const char *MISC_WEAPONINDICATOR = Localizable("Weapon Indicator");
@@ -379,6 +380,11 @@ bool CVotingMenu::OnMessageSuccess(int ClientID, const char *pDesc, const char *
 		if (IsOption(pDesc, ACC_VIP_PLUS_SPARKLE))
 		{
 			if (pChr) pChr->OnSparkleVIP();
+			return true;
+		}
+		if (IsOption(pDesc, ACC_VIP_PLUS_LASERTEXT))
+		{
+			if (pChr) pChr->OnLaserTextVIP(pReason);
 			return true;
 		}
 		if (IsOptionWithSuffix(pDesc, ACC_VIP_PLUS_RAINBOWSPEED))
@@ -771,6 +777,7 @@ void CVotingMenu::DoPageAccount(int ClientID, int *pNumOptions)
 			DoLineToggleOption(Page, pNumOptions, ACC_VIP_PLUS_LOVELY, pChr && pChr->m_Lovely);
 			DoLineToggleOption(Page, pNumOptions, ACC_VIP_PLUS_RAINBOWNAME, pPlayer->m_RainbowName);
 			DoLineToggleOption(Page, pNumOptions, ACC_VIP_PLUS_SPARKLE, pPlayer->m_Sparkle);
+			DoLineText(Page, pNumOptions, ACC_VIP_PLUS_LASERTEXT, BULLET_ARROW);
 		}
 	}
 }

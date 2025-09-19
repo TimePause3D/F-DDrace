@@ -4297,6 +4297,8 @@ void CCharacter::FDDraceInit()
 
 	m_LastMoneyDrop = 0;
 
+	m_LastLaserText = 0;
+
 	for (int i = 0; i < NUM_WEAPONS; i++)
 		m_aHadWeapon[i] = false;
 
@@ -6478,4 +6480,25 @@ void CCharacter::OnSparkleVIP()
 	}
 
 	Sparkle(!m_pPlayer->m_Sparkle, m_pPlayer->GetCID());
+}
+
+void CCharacter::OnLaserTextVIP(const char *pText)
+{
+	if (GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_VIP != VIP_PLUS)
+	{
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), m_pPlayer->Localize("You are not VIP+"));
+		return;
+	}
+
+	if (m_LastLaserText > Server()->Tick() - Server()->TickSpeed() * Config()->m_SvLaserTextDelay)
+	{
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), m_pPlayer->Localize("You can't type this command so quickly!"));
+		return;
+	}
+
+	char aBuf[VOTE_REASON_LENGTH];
+	str_copy(aBuf, pText, sizeof(aBuf));
+
+	GameServer()->CreateLaserText(m_Pos, m_pPlayer->GetCID(), aBuf, 3, true);
+	m_LastLaserText = Server()->Tick();
 }

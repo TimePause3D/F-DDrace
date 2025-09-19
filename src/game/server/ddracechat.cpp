@@ -1496,7 +1496,7 @@ void CGameContext::ConVIPInfo(IConsole::IResult* pResult, void* pUserData)
 	pSelf->SendChatTarget(pResult->m_ClientID, "~~~ VIP+ ~~~");
 	pSelf->SendChatTarget(pResult->m_ClientID, pPlayer->Localize("VIP+ includes every feature of VIP Classic."));
 	pSelf->SendChatTarget(pResult->m_ClientID, pPlayer->Localize("Additionally to that you can enter the VIP+ room to farm safely there, aswell as you gain access to the following commands:"));
-	pSelf->SendChatTarget(pResult->m_ClientID, "rainbowhook, rotatingball, epiccircle, lovely, rainbowname, rainbowspeed, sparkle");
+	pSelf->SendChatTarget(pResult->m_ClientID, "rainbowhook, rotatingball, epiccircle, lovely, rainbowname, rainbowspeed, sparkle, lasertext");
 }
 
 void CGameContext::ConSpawnWeaponsInfo(IConsole::IResult* pResult, void* pUserData)
@@ -3246,6 +3246,13 @@ void CGameContext::ConSparkleVIP(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CCharacter *pChr = pSelf->GetPlayerChar(pResult->m_ClientID);
 	if (pChr) pChr->OnSparkleVIP();
+}
+
+void CGameContext::ConLaserTextVIP(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CCharacter *pChr = pSelf->GetPlayerChar(pResult->m_ClientID);
+	if (pChr) pChr->OnLaserTextVIP(pResult->GetString(0));
 }
 
 void CGameContext::ConRainbowSpeedVIP(IConsole::IResult *pResult, void *pUserData)

@@ -130,4 +130,5 @@ CHAT_COMMAND("rainbowhook", "", CFGFLAG_CHAT, ConRainbowHookVIP, this, "Toggles 
 CHAT_COMMAND("rainbowname", "", CFGFLAG_CHAT, ConRainbowNameVIP, this, "Toggles rainbow name for yourself", AUTHED_NO)
 CHAT_COMMAND("rainbowspeed", "?i[speed]", CFGFLAG_CHAT, ConRainbowSpeedVIP, this, "Sets rainbow speed for yourself", AUTHED_NO)
 CHAT_COMMAND("sparkle", "", CFGFLAG_CHAT, ConSparkleVIP, this, "Toggles sparkle for yourself", AUTHED_NO)
+CHAT_COMMAND("lasertext", "r[text]", CFGFLAG_CHAT, ConLaserTextVIP, this, "Sends a laser text", AUTHED_NO)
 #undef CHAT_COMMAND
