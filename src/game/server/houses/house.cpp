@@ -17,6 +17,7 @@ CHouse::CHouse(CGameContext *pGameServer, int Type)
 	case HOUSE_PLOT_SHOP: m_pHeadline = Localizable("~ P L O T - S H O P ~"); break;
 	case HOUSE_BANK: m_pHeadline = Localizable("~ B A N K ~"); break;
 	case HOUSE_TAVERN: m_pHeadline = Localizable("~ T A V E R N ~"); break;
+	case HOUSE_COSMETICS_SHOP: m_pHeadline = Localizable("~ C O S M E T I C S ~"); break;
 	default: m_pHeadline = "~ I N V A L I D ~";
 	}
 

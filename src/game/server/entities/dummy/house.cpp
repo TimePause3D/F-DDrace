@@ -23,6 +23,7 @@ void CDummyHouse::OnTick()
 	case DUMMYMODE_PLOT_SHOP_DUMMY: Type = HOUSE_PLOT_SHOP; break;
 	case DUMMYMODE_BANK_DUMMY: Type = HOUSE_BANK; break;
 	case DUMMYMODE_TAVERN_DUMMY: Type = HOUSE_TAVERN; break;
+	case DUMMYMODE_COSMETICS_SHOP_DUMMY: Type = HOUSE_COSMETICS_SHOP; break;
 	default: return;
 	}
 

@@ -4415,10 +4415,12 @@ void CGameContext::FDDraceInit()
 	REQUIRED_TILE(ENTITY_PLOT_SHOP_DUMMY_SPAWN);
 	REQUIRED_TILE(ENTITY_BANK_DUMMY_SPAWN);
 	REQUIRED_TILE(ENTITY_TAVERN_DUMMY_SPAWN);
+	REQUIRED_TILE(ENTITY_COSMETICS_SHOP_DUMMY_SPAWN);
 	REQUIRED_TILE(TILE_SHOP);
 	REQUIRED_TILE(TILE_PLOT_SHOP);
 	REQUIRED_TILE(TILE_BANK);
 	REQUIRED_TILE(TILE_TAVERN);
+	REQUIRED_TILE(TILE_COSMETICS_SHOP);
 	// minigames
 	REQUIRED_TILE(TILE_MINIGAME_BLOCK);
 	REQUIRED_TILE(TILE_SURVIVAL_LOBBY);
@@ -4501,6 +4503,7 @@ void CGameContext::FDDraceInit()
 	m_pHouses[HOUSE_PLOT_SHOP] = new CShop(this, HOUSE_PLOT_SHOP);
 	m_pHouses[HOUSE_BANK] = new CBank(this);
 	m_pHouses[HOUSE_TAVERN] = new CTavern(this);
+	m_pHouses[HOUSE_COSMETICS_SHOP] = new CShop(this, HOUSE_COSMETICS_SHOP);
 
 	m_WhoIs.Init(this);
 	m_RainbowName.Init(this);
@@ -7582,7 +7585,8 @@ void CGameContext::ConnectDummy(int DummyMode, vec2 Pos)
 		|| (DummyMode == DUMMYMODE_PLOT_SHOP_DUMMY && Collision()->TileUsed(ENTITY_PLOT_SHOP_DUMMY_SPAWN))
 		|| (DummyMode == DUMMYMODE_BANK_DUMMY && Collision()->TileUsed(ENTITY_BANK_DUMMY_SPAWN))
 		|| (DummyMode == DUMMYMODE_TAVERN_DUMMY && Collision()->TileUsed(ENTITY_TAVERN_DUMMY_SPAWN))
-		)
+		|| (DummyMode == DUMMYMODE_COSMETICS_SHOP_DUMMY && Collision()->TileUsed(ENTITY_COSMETICS_SHOP_DUMMY_SPAWN)
+		))
 		pDummy->m_Minigame = MINIGAME_NONE;
 
 	if (DummyMode == DUMMYMODE_TAVERN_DUMMY)
@@ -7615,6 +7619,7 @@ bool CGameContext::IsHouseDummy(int ClientID, int Type)
 	case HOUSE_PLOT_SHOP: Mode = DUMMYMODE_PLOT_SHOP_DUMMY; break;
 	case HOUSE_BANK: Mode = DUMMYMODE_BANK_DUMMY; break;
 	case HOUSE_TAVERN: Mode = DUMMYMODE_TAVERN_DUMMY; break;
+	case HOUSE_COSMETICS_SHOP: Mode = DUMMYMODE_COSMETICS_SHOP_DUMMY; break;
 	}
 	return m_apPlayers[ClientID] && m_apPlayers[ClientID]->GetDummyMode() == Mode;
 }
@@ -7636,6 +7641,7 @@ void CGameContext::ConnectHouseDummy(int Type, bool SpawnTileOnly)
 	case HOUSE_PLOT_SHOP: Index = TILE_PLOT_SHOP; SpawnTile = ENTITY_PLOT_SHOP_DUMMY_SPAWN; Dummymode = DUMMYMODE_PLOT_SHOP_DUMMY; break;
 	case HOUSE_BANK: Index = TILE_BANK; SpawnTile = ENTITY_BANK_DUMMY_SPAWN; Dummymode = DUMMYMODE_BANK_DUMMY; break;
 	case HOUSE_TAVERN: Index = TILE_TAVERN; SpawnTile = ENTITY_TAVERN_DUMMY_SPAWN; Dummymode = DUMMYMODE_TAVERN_DUMMY; break;
+	case HOUSE_COSMETICS_SHOP: Index = TILE_COSMETICS_SHOP; SpawnTile = ENTITY_COSMETICS_SHOP_DUMMY_SPAWN; Dummymode = DUMMYMODE_COSMETICS_SHOP_DUMMY; break;
 	default: return;
 	}
 

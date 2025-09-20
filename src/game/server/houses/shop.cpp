@@ -6,7 +6,7 @@
 CShop::CShop(CGameContext *pGameServer, int Type) : CHouse(pGameServer, Type)
 {
 	// shop types only
-	if (Type != HOUSE_SHOP && Type != HOUSE_PLOT_SHOP)
+	if (Type != HOUSE_SHOP && Type != HOUSE_PLOT_SHOP && Type != HOUSE_COSMETICS_SHOP)
 		return;
 
 	m_aItems[PAGE_MAIN].m_Used = true;
@@ -21,19 +21,15 @@ CShop::CShop(CGameContext *pGameServer, int Type) : CHouse(pGameServer, Type)
 		m_NumItemsList = NUM_ITEMS_SHOP_LIST;
 
 		bool EuroMode = GameServer()->Config()->m_SvEuroMode;
-		AddItem("Room Key", 20, 10000, TIME_DISCONNECT, Localizable("If you have the room key you can enter the room. It's under the spawn and there is a money tile."));
+		AddItem("Room Key", 15, 10000, TIME_DISCONNECT, Localizable("If you have the room key you can enter the plots area. It's on the left of spawn."));
 		AddItem("Spawn Shotgun", 25, 5000, TIME_USED, Localizable("You will have shotgun ammo if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
 		AddItem("Spawn Grenade", 25, 2500, TIME_USED, Localizable("You will have grenade ammo if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
 		AddItem("Spawn Rifle", 25, 10000, TIME_USED, Localizable("You will have rifle ammo if you respawn. For more information about spawn weapons, please type '/spawnweapons'."));
 		AddItem("Police", -1, 100000, TIME_FOREVER, Localizable("Police officers get help from the police bot. For more information about the specific police ranks, please say '/police'."));
 		AddItem("Taser", 30, -1, TIME_FOREVER, Localizable("Taser is a rifle that freezes a player. For more information about the taser and your taser stats, plase visit '/taser'."));
 		AddItem("Taser battery", 30, 45000, TIME_USED, Localizable("Taser battery is required to use the taser. Maximum amount of ammo is 100. Plase visit '/taser'."), false, 5);
-		AddItem("Rainbow", 5, 1500, TIME_DEATH, Localizable("Rainbow will make your tee change the color very fast."));
-		AddItem("Bloody", 15, 3500, TIME_DEATH, Localizable("Bloody will give your tee a permanent kill effect."));
-		AddItem("Spooky Ghost", 35, 1000000, TIME_FOREVER, Localizable("Using this item you can hide from other players behind bushes. If your ghost is activated you will be able to shoot plasma projectiles. How it works: '/helptoggle'"));
 		AddItem("VIP Classic", 1, EuroMode ? 5 : 500000, TIME_30_DAYS, Localizable("VIP Classic gives you some benefits, check '/vip'."), EuroMode);
 		AddItem("VIP+", 1, EuroMode ? 10 : 750000, TIME_20_DAYS, Localizable("VIP+ gives you even more benefits than VIP Classic, check '/vip'."), EuroMode);
-	//	AddItem("Ninjajetpack", 21, 10000, TIME_FOREVER, Localizable("It will make your jetpack gun be a ninja. Toggle it using '/ninjajetpack'.")); // UNUSED
 		AddItem("Portal Rifle", EuroMode ? 1 : 45, EuroMode ? 10 : 500000, TIME_20_DAYS, Localizable("With Portal Rifle you can create two portals where your cursor is, then teleport between them."), EuroMode);
 		AddItem("Portal Blocker", 10, 3000, TIME_USED, Localizable("Create portal blockers hammer and this ammo with your cursor. See '/portal' for your current amount. How it works: '/helptoggle' (Useless on BlockField. Can be used as temporary graffiti though.)"), false, 10);
 
@@ -68,6 +64,19 @@ CShop::CShop(CGameContext *pGameServer, int Type) : CHouse(pGameServer, Type)
 			Time = Size == 0 ? TIME_7_DAYS : Size == 1 ? TIME_5_DAYS : -1;
 			AddItem(aaName[i], Level, Price, Time, "");
 		}
+	}
+	else if (IsType(HOUSE_COSMETICS_SHOP))
+	{
+		m_NumItemsList = NUM_ITEMS_COSMETICS_SHOP_LIST;
+
+		AddItem("Rainbow", 5, 2500, TIME_DEATH, Localizable("Rainbow will make your tee change the color very fast."));
+		AddItem("Bloody", 15, 5000, TIME_DEATH, Localizable("Bloody will give your tee a permanent kill effect."));
+		AddItem("Ninjajetpack", 20, 25000, TIME_FOREVER, Localizable("It will make your jetpack gun be a ninja. Toggle it using '/ninjajetpack'."));
+		AddItem("Trail", 25, 7500, TIME_DEATH, Localizable("Trail will give your tee bullets that follow you."));
+		AddItem("Rotating ball", 35, 10000, TIME_DEATH, Localizable("You will get a ball that rotates around your tee."));
+		AddItem("Epic circle", 40, 15000, TIME_DEATH, Localizable("You will get a cool circle around your tee."));
+		AddItem("Lovely", 45, 20000, TIME_DEATH, Localizable("Lovely makes your tee fall in love c;"));
+		AddItem("Spooky Ghost", 50, 1000000, TIME_FOREVER, Localizable("Using this item you can hide from other players behind bushes. If your ghost is activated you will be able to shoot plasma projectiles. How it works: '/helptoggle'"));
 	}
 }
 
@@ -215,6 +224,8 @@ void CShop::OnPageChange(int ClientID)
 				GameServer()->GetMaxPlotObjects(Item),
 				aOwner, aRented);
 		}
+		else if (IsType(HOUSE_COSMETICS_SHOP))
+			str_copy(aDescription, GameServer()->m_apPlayers[ClientID]->Localize(m_aItems[Item].m_pDescription), sizeof(aDescription));
 
 		char aAmount[64] = "\n";
 		if (IsType(HOUSE_SHOP) && m_aItems[Item].m_Amount > 1)
@@ -285,34 +296,30 @@ void CShop::BuyItem(int ClientID, int Item)
 			|| (Item == ITEM_POLICE				&& pAccount->m_PoliceLevel >= NUM_POLICE_LEVELS)
 			|| (Item == ITEM_TASER				&& pAccount->m_TaserLevel >= NUM_TASER_LEVELS)
 			|| (Item == ITEM_TASER_BATTERY && pAccount->m_TaserBattery >= MAX_TASER_BATTERY)
-			|| (Item == ITEM_RAINBOW				&& (pChr->m_Rainbow || pPlayer->m_InfRainbow))
-			|| (Item == ITEM_BLOODY				&& (pChr->m_Bloody || pChr->m_StrongBloody))
-			|| (Item == ITEM_SPOOKY_GHOST		&& pAccount->m_SpookyGhost)
 			//|| (Item == ITEM_VIP				&& pAccount->m_VIP) // vip can be bought unlimited times
 			//|| (Item == ITEM_SPAWN_SHOTGUN		&& pAccount->m_SpawnWeapon[0]) // unlimited
 			//|| (Item == ITEM_SPAWN_GRENADE		&& pAccount->m_SpawnWeapon[1]) // unlimited
 			//|| (Item == ITEM_SPAWN_RIFLE		&& pAccount->m_SpawnWeapon[2]) // unlimited
-			//|| (Item == ITEM_NINJAJETPACK		&& pAccount->m_Ninjajetpack) // UNUSED
 			//|| (Item == ITEM_PORTAL_RIFLE		&& pAccount->m_PortalRifle) // portal rifle can be bought unlimited times
 			)
 		{
-			bool UseThe = false;
+			// bool UseThe = false;
 
 			switch (Item)
 			{
 			case ITEM_POLICE:															GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have the highest police rank")); break;
 			case ITEM_TASER:															GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have the maximum taser level")); break;
 			case ITEM_TASER_BATTERY:													GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have a fully filled taser battery")); break;
-			case ITEM_SPOOKY_GHOST: case ITEM_ROOM_KEY:									UseThe = true;
+			case ITEM_ROOM_KEY:															GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have a room key")); break;														
 				// fallthrough
-			default:
+			/* default:
 				if (UseThe)	
 					str_format(aMsg, sizeof(aMsg), pPlayer->Localize("You already have the %s"), m_aItems[ItemID].m_pName);
 				else
 					str_format(aMsg, sizeof(aMsg), pPlayer->Localize("You already have %s"), m_aItems[ItemID].m_pName);
-				GameServer()->SendChatTarget(ClientID, aMsg);
-			}
-			return;
+				GameServer()->SendChatTarget(ClientID, aMsg); */
+			} //commenting this for now to see if i need it//
+			return; 
 		}
 
 		// check police lvl 3 for taser
@@ -325,12 +332,6 @@ void CShop::BuyItem(int ClientID, int Item)
 		if (pAccount->m_VIP && ((Item == ITEM_VIP && pAccount->m_VIP != VIP_CLASSIC) || (Item == ITEM_VIP_PLUS && pAccount->m_VIP != VIP_PLUS)))
 		{
 			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You can not buy this VIP level while owning another one"));
-			return;
-		}
-
-		if (Item == ITEM_BLOODY && (pChr->m_Atom || pChr->m_Trail || pChr->m_RotatingBall || pChr->m_EpicCircle))
-		{
-			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You can not buy bloody while specific cosmetics are activated"));
 			return;
 		}
 
@@ -367,6 +368,49 @@ void CShop::BuyItem(int ClientID, int Item)
 			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("Your IP address already owns one plot"));
 			return;
 		}
+	}
+	else if (IsType(HOUSE_COSMETICS_SHOP))
+	{
+		if(
+			(Item == ITEM_RAINBOW				&& (pChr->m_Rainbow || pPlayer->m_InfRainbow))
+			|| (Item == ITEM_BLOODY				&& (pChr->m_Bloody || pChr->m_StrongBloody))
+			|| (Item == ITEM_NINJAJETPACK		&& pAccount->m_Ninjajetpack)
+			|| (Item == ITEM_TRAIL 				&& (pChr->m_Trail))
+			|| (Item == ITEM_ROTATINGBALL		&& (pChr->m_RotatingBall))
+			|| (Item == ITEM_EPICCIRCLE			&& (pChr->m_EpicCircle))
+			|| (Item == ITEM_LOVELY				&& (pChr->m_Lovely))
+			|| (Item == ITEM_SPOOKY_GHOST		&& pAccount->m_SpookyGhost)
+		)
+		{
+			switch (Item)
+			{
+				case ITEM_NINJAJETPACK:			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have ninja jetpack")); break;
+				case ITEM_SPOOKY_GHOST:			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You already have spooky ghost")); break;
+			}
+			return;
+		}
+		if (Item == ITEM_BLOODY && (pChr->m_Atom || pChr->m_Trail || pChr->m_RotatingBall || pChr->m_EpicCircle))
+		{
+			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You can not buy bloody while specific cosmetics are activated"));
+			return;
+		}
+		if (Item == ITEM_TRAIL && (pChr->m_Atom || pChr->m_Bloody ||  pChr->m_EpicCircle))
+		{
+			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You can not buy trail while specific cosmetics are activated"));
+			return;
+		}
+		if (Item == ITEM_ROTATINGBALL && (pChr->m_Atom || pChr->m_Bloody))
+		{
+			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You can not buy rotating ball while specific cosmetics are activated"));
+			return;
+		}
+		if (Item == ITEM_EPICCIRCLE && (pChr->m_Atom || pChr->m_Bloody || pChr->m_Trail))
+		{
+			GameServer()->SendChatTarget(ClientID, pPlayer->Localize("You can not buy epic circle while specific cosmetics are activated"));
+			return;
+		}
+	
+
 	}
 
 	if (Amount <= 0)
@@ -430,9 +474,6 @@ void CShop::BuyItem(int ClientID, int Item)
 		case ITEM_POLICE:			pAccount->m_PoliceLevel++; break;
 		case ITEM_TASER:			pAccount->m_TaserLevel++; break;
 		case ITEM_TASER_BATTERY:	break; // done above
-		case ITEM_RAINBOW:			pChr->Rainbow(true, -1, true); break;
-		case ITEM_BLOODY:			pChr->Bloody(true, -1, true); break;
-		case ITEM_SPOOKY_GHOST:		pAccount->m_SpookyGhost = true; break;
 		case ITEM_VIP_PLUS:			pChr->Core()->m_MoveRestrictionExtra.m_VipPlus = true;
 			// fallthrough
 		case ITEM_VIP:				pAccount->m_VIP = Item == ITEM_VIP ? VIP_CLASSIC : VIP_PLUS; pPlayer->SetExpireDate(Item); break;
@@ -451,5 +492,19 @@ void CShop::BuyItem(int ClientID, int Item)
 		str_format(aBuf, sizeof(aBuf), pPlayer->Localize("The plot will expire on %s"), GameServer()->GetDate(GameServer()->m_aPlots[Item].m_ExpireDate));
 		GameServer()->SendChatTarget(ClientID, aBuf);
 		GameServer()->SetPlotInfo(Item, pPlayer->GetAccID());
+	}
+	else if (IsType(HOUSE_COSMETICS_SHOP))
+	{
+		switch(Item)
+		{
+		case ITEM_RAINBOW:			pChr->Rainbow(true, -1, true); break;
+		case ITEM_BLOODY:			pChr->Bloody(true, -1, true); break;
+		case ITEM_NINJAJETPACK:		pAccount->m_Ninjajetpack = true; break;
+		case ITEM_TRAIL:			pChr->Trail(true, -1, true); break;
+		case ITEM_ROTATINGBALL:		pChr->RotatingBall(true, -1, true); break;
+		case ITEM_EPICCIRCLE:		pChr->EpicCircle(true, -1, true); break;
+		case ITEM_LOVELY:			pChr->Lovely(true, -1, true); break;
+		case ITEM_SPOOKY_GHOST:		pAccount->m_SpookyGhost = true; break;
+		}
 	}
 }

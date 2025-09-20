@@ -2851,6 +2851,7 @@ void CCharacter::HandleTiles(int Index)
 			case HOUSE_PLOT_SHOP: Index = TILE_PLOT_SHOP; break;
 			case HOUSE_BANK: Index = TILE_BANK; break;
 			case HOUSE_TAVERN: Index = TILE_TAVERN; break;
+			case HOUSE_COSMETICS_SHOP: Index = TILE_COSMETICS_SHOP; break;
 			}
 
 			if (m_TileIndex == Index || m_TileFIndex == Index)
@@ -4639,6 +4640,7 @@ void CCharacter::HandleLastIndexTiles()
 		case HOUSE_PLOT_SHOP: Index = TILE_PLOT_SHOP; break;
 		case HOUSE_BANK: Index = TILE_BANK; break;
 		case HOUSE_TAVERN: Index = TILE_TAVERN; break;
+		case HOUSE_COSMETICS_SHOP: Index = TILE_COSMETICS_SHOP; break;
 		}
 
 		if (m_TileIndex != Index && m_TileFIndex != Index)
@@ -6496,6 +6498,7 @@ void CCharacter::OnLaserTextVIP(const char *pText)
 		return;
 	}
 
+	// trim input to 15 characters
 	char aBuf[VOTE_REASON_LENGTH];
 	str_copy(aBuf, pText, sizeof(aBuf));
 
